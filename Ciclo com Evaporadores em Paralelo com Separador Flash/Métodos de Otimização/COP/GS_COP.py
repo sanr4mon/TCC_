@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat May 13 21:21:58 2023
+Created on Wed May 31 10:03:05 2023
 
 @author: Ramon
 """
@@ -10,26 +10,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp as cp
 from CoolProp.CoolProp import PropsSI
-from COP_Duplo_Estagio import COP_Duplo_Estagio_Compress
+from COP_Paralelo_Separador_Flash import COP_Paralelo_Separador
 
-input_values = {
-    't_external': 293,
-    't_cond': 303,
-    't_internal_g': 278,
-    't_internal_f': 250,
-    'Q_ETB': 35200,  # 10 TR
+input_values ={
+    't_external':298,
+    't_cond': 308,
+    't_internal_f':250,
+    't_internal_g':274.372,
+    'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant': 'R600A',
-    # 'P_ETB':100000,#100 kPa
-    'tit_evap_g': 0.6,
-    'subcooling': 5,
-    'superheating': 5
+    'refrigerant':'R410A',
+    'r':1.0,
+    'subcooling':10,
+    'superheating':1
 }
 
 
 def func_fx(x,y,cycle_inputs):
     cycle_inputs[y] = x
-    fx = COP_Duplo_Estagio_Compress(cycle_inputs)
+    fx = COP_Paralelo_Separador(cycle_inputs)
     #print (fx)
     return(fx)
 
@@ -101,7 +100,7 @@ def golden(cycle_inputs,xl,xu,y,et):
         print(xopt)
         #print(it)
 
-#golden(input_values,0.35,0.65,'tit_evap_g',0.0001)
+#golden(input_values,1,2,'r',0.0001)
 #golden(input_values,1,10,'subcooling',0.0001)
 golden(input_values,1,10,'superheating',0.0001)
-#golden(input_values,263,278,'t_internal_g',0.0001)
+#golden(input_values,268,278,'t_internal_g',0.0001)

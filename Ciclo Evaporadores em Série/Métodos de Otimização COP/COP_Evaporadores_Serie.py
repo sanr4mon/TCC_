@@ -30,11 +30,11 @@ input_values ={
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
     'refrigerant':'R410A',
-    'variacao_titulo_f':0.6,
-    'subcooling':5,
-    'superheating':5,
+    'variacao_titulo_f':0.1,
+    'subcooling':10,
+    'superheating':1,
     'approach_HX':5,
-    'r':1.5
+    'r':1.0
 }
 
 
@@ -133,6 +133,6 @@ def COP_Evap_Serie(cycle_inputs):
     
 
 
-#COP_Evap_Serie(input_values)
+COP_Evap_Serie(input_values)
    
     

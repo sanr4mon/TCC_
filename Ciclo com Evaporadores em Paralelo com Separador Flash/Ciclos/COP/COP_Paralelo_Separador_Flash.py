@@ -171,7 +171,8 @@ def COP_Paralelo_Separador(cycle_inputs):
     
     #print(W_CBP)
     #print(point_4['HMASS'],point_3['HMASS'])
-    #print(work)
+    print("work",work)
+    print("Q_ETI",Q_ETI)
     print("COP",COP)
     return COP
     

@@ -29,7 +29,7 @@ input_values ={
     't_internal_f':250,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R410A',
+    'refrigerant':'R1234ze(E)',
     'variacao_titulo_f':0.6,
     'subcooling':5,
     'superheating':5,
@@ -122,6 +122,8 @@ def COP_Evap_Serie(cycle_inputs):
     COP = (Q_ETI + cycle_inputs['Q_ETB'])/work
     
     print("COP",COP)
+    print("work",work)
+    print("Q_ETI",Q_ETI)
     return COP
 
 

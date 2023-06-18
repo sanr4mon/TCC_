@@ -30,10 +30,10 @@ input_values ={
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
     'refrigerant':'R600A',
-    'subcooling':5,
-    'superheating':5,
-    'approach_HX':5,
-    'r':1.5,
+    'subcooling':10,
+    'superheating':1,
+    'approach_HX':1,
+    'r':2,
     'tit_evap_f':0.6
 }
 
@@ -134,47 +134,52 @@ def Ef_Ex_Paralelo(cycle_inputs):
     work = m1*(point_2['HMASS'] - point_1['HMASS'])
     
     
+    
 
     #Calculando taxa de destruição de exergia de cada componente
     #1. Compressor
-    Sger_comp = m1*(point_2['SMASS']-point_1['SMASS'])
-    Ad_comp = cycle_inputs['t_external']*Sger_comp
+    delta_A_comp = (point_2['HMASS'] - point_1['HMASS']) - cycle_inputs['t_external']*(point_2['SMASS'] - point_1['SMASS'])
+    Ad_comp = work - m1*delta_A_comp
     print("Ad_comp",Ad_comp)
     
     #2. Condensador
     Q_cond = m1*(point_2['HMASS'] - point_3['HMASS'])
-    print("Q_cond",Q_cond)
-    Sger_cond = m1*(point_3['SMASS'] - point_2['SMASS']) + (Q_cond/cycle_inputs['t_external']) 
-    Ad_cond = cycle_inputs['t_external'] * Sger_cond
+    delta_A_cond = (point_2['HMASS'] - point_3['HMASS']) - cycle_inputs['t_external']*(point_2['SMASS'] - point_3['SMASS'])
+    Ad_cond = m1*delta_A_cond 
     print("Ad_cond",Ad_cond)
     
     #3. Trocador de Calor
-    Sger_HX = m1*(point_4a['SMASS'] + point_1['SMASS'] - point_8['SMASS'] - point_3['SMASS'])
-    Ad_HX = cycle_inputs['t_external'] * Sger_HX
+    delta_A_superior = (point_3['HMASS'] - point_4a['HMASS'] - cycle_inputs['t_external']*(point_3['SMASS'] - point_4a['SMASS']))
+    delta_A_inferior = (point_1['HMASS'] - point_8['HMASS'] - cycle_inputs['t_external']*(point_1['SMASS'] - point_8['SMASS']))
+    Ad_HX = m1*(delta_A_superior - delta_A_inferior)
     print("Ad_HX",Ad_HX)
     
     #4. Dispositivo de Expansão 1
-    Sger_DE1 = m2*(point_5a['SMASS'] - point_4a['SMASS'])
-    Ad_DE1 = cycle_inputs['t_external']*Sger_DE1
+    delta_A_DE1 = -cycle_inputs['t_external'] * (point_4a['SMASS'] - point_5a['SMASS'])
+    Ad_DE1 = m2 * delta_A_DE1
     print("Ad_DE1",Ad_DE1)
     
     #5. Dispositivo de Expansão 2
-    Sger_DE2 = m3*(point_5b['SMASS'] - point_4b['SMASS'])
-    Ad_DE2 = cycle_inputs['t_external'] * Sger_DE2
+    delta_A_DE2 = -cycle_inputs['t_external'] * (point_4b['SMASS'] - point_5b['SMASS'])
+    Ad_DE2 = m3 * delta_A_DE2
     print("Ad_DE2",Ad_DE2)
     
     #6. Evaporador da Geladeira
-    Sger_ETI = m2*(point_6a['SMASS']-point_5a['SMASS']) - (Q_ETI/point_6a['T'])
-    Ad_ETI = cycle_inputs['t_external'] * Sger_ETI
+    delta_A_ETI = point_6a['HMASS'] - point_7a['HMASS'] - cycle_inputs['t_external']*(point_6a['SMASS'] - point_7a['SMASS'])
+    Ad_ETI = m2*delta_A_ETI + (1 - (cycle_inputs['t_external']/(point_6a['T']+5))) * Q_ETI
     print("Ad_ETI",Ad_ETI)
     
     #7. Evaporador do Freezer
-    print(point_5b['SMASS'],point_6b['SMASS'])
-    Sger_ETB = m3*(point_6b['SMASS']-point_5b['SMASS']) - (cycle_inputs['Q_ETB']/point_6b['T'])
-    Ad_ETB = cycle_inputs['t_external'] * Sger_ETB
+    delta_A_ETB = point_5b['HMASS'] - point_6b['HMASS'] - cycle_inputs['t_external']*(point_5b['SMASS'] - point_6b['SMASS'])
+    Ad_ETB = m3*delta_A_ETB + (1 - (cycle_inputs['t_external']/(point_6b['T']+5))) * cycle_inputs['Q_ETB']
     print("Ad_ETB",Ad_ETB)
     
-    Ad_total = Ad_comp + Ad_cond +  Ad_DE1 + Ad_DE2 + Ad_ETI + Ad_ETB +Ad_HX
+    #8.Válvula Reguladora de Pressão
+    delta_A_VRP = -cycle_inputs['t_external'] * (point_6a['SMASS'] - point_7a['SMASS'])
+    Ad_VRP = m2 * delta_A_VRP
+    print("Ad_VRP",Ad_VRP)
+    
+    Ad_total = Ad_comp + Ad_cond +  Ad_DE1 + Ad_DE2 + Ad_ETI + Ad_ETB + Ad_HX+ Ad_VRP
     
     ef_ex = 1 - (Ad_total/work)
     

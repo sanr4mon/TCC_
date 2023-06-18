@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat May 13 21:00:16 2023
+Created on Sat Jun 17 20:51:56 2023
 
 @author: Ramon
 """
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp as cp
 from CoolProp.CoolProp import PropsSI
-from COP_Duplo_Estagio import COP_Duplo_Estagio_Compress
+from Ef_Ex_Duplo_Estagio import Ef_Ex_Duplo_Estagio
  
 
 #Parâmetros
@@ -34,16 +34,16 @@ VarMax = [0.65,5 + 273.15, 10, 10]
     
 cycle_inputs = {
     't_external': 293,
-    't_cond': 303,
-    #'t_internal_g': 278,
-    't_internal_f': 250,
-    'Q_ETB': 35200,  # 10 TR
+    't_cond':303,
+    't_internal_g':273,
+    't_internal_f':250,
+    'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant': 'R600A',
-    # 'P_ETB':100000,#100 kPa
-    #'tit_evap_g': 0.6,
-    #'subcooling': 5,
-    #'superheating': 5
+    'refrigerant':'R717',
+    #'P_ETB':100000,#100 kPa
+    'tit_evap_g':0.6,
+    'subcooling':5,
+    'superheating':5
 }
 
 
@@ -52,7 +52,7 @@ def func1(x,y,z,w):
     cycle_inputs['t_internal_g'] = y
     cycle_inputs['superheating'] = z
     cycle_inputs['subcooling'] = w
-    return COP_Duplo_Estagio_Compress(cycle_inputs)
+    return Ef_Ex_Duplo_Estagio(cycle_inputs)
 
 
 

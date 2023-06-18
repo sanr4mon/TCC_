@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed May 31 10:15:56 2023
+Created on Sat Jun 17 18:46:07 2023
 
 @author: Ramon
 """
@@ -11,8 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp as cp
 from CoolProp.CoolProp import PropsSI
-from COP_Paralelo_Separador_Flash import COP_Paralelo_Separador
- 
+from Ef_Ex_LM import Ef_Ex_LM
 
 #Parâmetros
 
@@ -27,32 +26,33 @@ min_w = 0.3
 
 mode = 1
 
-VarMin = [1,268, 1, 1]
-VarMax = [2,278, 10, 10]
+VarMin = [1,0.4, 1, 1]
+VarMax = [10,0.55, 10, 10]
 
 #Inicialização:
     
-cycle_inputs = {
+cycle_inputs ={
     't_external':298,
     't_cond': 308,
     't_internal_f':250,
-    #'t_internal_g':268,
-    'Q_ETB':35200, #10 TR
+    'Q_ETB':35200, #71 TR
     'N_isent': 0.7,
-    'refrigerant':'R600A',
-    #'r':1.5,
-    #'subcooling':5,
-    #'superheating':5
+    'refrigerant':'R410A',
+    'tit_evap_f':0.5,
+    'subcooling':5,
+    'superheating':5,
+    'approach_HX':5
 }
 
 
 
 def func1(x,y,z,w):
-    cycle_inputs['r'] = x
-    cycle_inputs['t_internal_g'] = y
+    cycle_inputs['approach_HX'] = x
+    cycle_inputs['tit_evap_f'] = y
     cycle_inputs['superheating'] = z
     cycle_inputs['subcooling'] = w
-    return COP_Paralelo_Separador(cycle_inputs)
+    
+    return Ef_Ex_LM (cycle_inputs)
 
 
 

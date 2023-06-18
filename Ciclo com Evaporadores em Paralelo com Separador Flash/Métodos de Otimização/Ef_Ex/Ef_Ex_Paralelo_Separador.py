@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri May 19 10:09:05 2023
+Created on Mon Jun  5 19:48:16 2023
 
 @author: Ramon
 """
@@ -26,19 +26,20 @@ input_values ={
     't_external':298,
     't_cond': 308,
     't_internal_f':250,
-    't_internal_g':270,
+    't_internal_g':268,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R600A',
-    'r':1.5,
-    'subcooling':5,
-    'superheating':5
+    'refrigerant':'R410A',
+    'r':2.0,
+    'subcooling':10,
+    'superheating':1
 }
 
-#P_ETB = PropsSI("P","Q",1,"T",temp.freezer","refrigerant")
 
-def COP_Paralelo_Separador(cycle_inputs):
-    
+
+
+
+def Ef_Ex_Paralelo_Sep(cycle_inputs):
     P_ETB = PropsSI("P","Q",1,"T",cycle_inputs['t_internal_f'],cycle_inputs['refrigerant'])
 
     
@@ -105,15 +106,8 @@ def COP_Paralelo_Separador(cycle_inputs):
     propriedades(point_8b)
     #print('temperatura 8b =',point_8b['T'])
     
-    t9 = 0
     
-    if cycle_inputs['superheating'] == 0:
-        t9 = int(point_8b['T'])
-    
-    else:
-        t9 = point_8b['T'] + cycle_inputs['superheating']
-    
-    point_9b = {'P':P_ETB,'T':t9,'refrigerant':cycle_inputs['refrigerant']}
+    point_9b = {'P':P_ETB,'T':point_8b['T']+cycle_inputs['superheating'],'refrigerant':cycle_inputs['refrigerant']}
     propriedades(point_9b)
     
     #print('temp. superaquecida = ',point_9b['T'])
@@ -159,26 +153,83 @@ def COP_Paralelo_Separador(cycle_inputs):
     W_CBP = m2*(point_2['HMASS'] - point_1['HMASS'])
     
     work = W_CAP + W_CBP
+    #print("work",work)
     
     #print(W_CAP,W_CBP,work)
     
     #Encontrando potência do ETI
     
-    Q_ETI = m4*(point_8a['HMASS'] - point_7a['HMASS'])
+    Q_ETI = m3*(point_8a['HMASS'] - point_7a['HMASS'])
     #print(Q_ETI)
     
-    COP = (cycle_inputs['Q_ETB'] + Q_ETI)/work
+    #Encontrando taxa de destruição de exergia para cada componente do ciclo
     
-    #print(W_CBP)
-    #print(point_4['HMASS'],point_3['HMASS'])
-    #print(work)
-    #print("COP",COP)
-    return COP
+    #1. Compressor de Alta Pressão
+    delta_A_CAP = (point_4['HMASS'] - point_3['HMASS']) - cycle_inputs['t_external']*(point_4['SMASS'] - point_3['SMASS'])
+    Ad_CAP = W_CAP - m1*delta_A_CAP
+    #print("Ad_CAP",Ad_CAP)
+    
+    
+    #2. Condensador 
+    Q_cond = m1*(point_4['HMASS'] - point_5['HMASS'])
+    delta_A_cond = (point_4['HMASS'] - point_5['HMASS']) - cycle_inputs['t_external']*(point_4['SMASS'] - point_5['SMASS'])
+    Ad_cond = m1*delta_A_cond 
+    #print("Ad_cond",Ad_cond)
+    
+    #3.Disp. Expansão 2
+    delta_A_DE2 = -cycle_inputs['t_external'] * (point_7b['SMASS'] - point_8b['SMASS'])
+    Ad_DE2 = m3 * delta_A_DE2
+    #print("Ad_DE2",Ad_DE2)
+    
+    #4.Separador Flash
+    Sger_sep = m1*(point_3['SMASS'] - point_6['SMASS']) + m2*(point_7['SMASS'] - point_2['SMASS'])
+    Ad_sep = cycle_inputs['t_external'] * Sger_sep
+    #print('Ad_sep',Ad_sep)
+    
+    #5.Evaporador de Temperatura Intermediária
+    delta_A_ETI = point_7a['HMASS'] - point_8a['HMASS'] - cycle_inputs['t_external']*(point_7a['SMASS'] - point_8a['SMASS'])
+    Ad_ETI = m3*delta_A_ETI + (1 - (cycle_inputs['t_external']/(point_8a['T']+5))) * Q_ETI
+    #print("Ad_ETI",Ad_ETI)
+    
+    #6.Válvula Reguladora de Pressão
+    delta_A_VRP = -cycle_inputs['t_external'] * (point_8a['SMASS'] - point_9a['SMASS'])
+    Ad_VRP = m2 * delta_A_VRP
+    #print("Ad_VRP",Ad_VRP)
+    
+    #7. Dispositivo de Expansão 1
+    delta_A_DE1 = -cycle_inputs['t_external'] * (point_5['SMASS'] - point_6['SMASS'])
+    Ad_DE1 = m1 * delta_A_DE1
+    #print("Ad_DE1",Ad_DE1)
+    
+    
+    #8. Evaporador de Baixa Temperatura
+    delta_A_ETB = point_8b['HMASS'] - point_9b['HMASS'] - cycle_inputs['t_external']*(point_8b['SMASS'] - point_9b['SMASS'])
+    Ad_ETB = m4 *delta_A_ETB + (1 - (cycle_inputs['t_external']/(point_9b['T']+5))) * cycle_inputs['Q_ETB']
+    #print("Ad_ETB",Ad_ETB)
+    
+    #9 Compressor de Baixa Pressão
+    delta_A_CBP = (point_2['HMASS'] - point_1['HMASS']) - cycle_inputs['t_external']*(point_2['SMASS'] - point_1['SMASS'])
+    Ad_CBP = W_CBP - m2*delta_A_CBP
+    #print("Ad_CBP",Ad_CBP)
+    
+    #10. Nó no ponto 1
+    delta_A_9b_1 = point_9b['HMASS'] - point_1['HMASS'] - cycle_inputs['t_external']*(point_9b['SMASS'] - point_1['SMASS'])
+    delta_A_9a_1 = point_9a['HMASS'] - point_1['HMASS'] - cycle_inputs['t_external']*(point_9a['SMASS'] - point_1['SMASS'])
+    Ad_no =  m4* delta_A_9b_1 + m3*delta_A_9a_1 
+    #print("Ad_no",Ad_no)
+    
+    Ad_total = Ad_CAP + Ad_cond + Ad_DE1 + Ad_ETI + Ad_VRP + Ad_DE2 + Ad_ETB + Ad_CBP + Ad_sep + Ad_no
+    
+    #Cálculo da Eficiência Exergética
+    ef_ex = 1 - (Ad_total/work)
+    
+    print(ef_ex)
+    
+    return ef_ex
     
 
-    
 
 
-#COP_Paralelo_Separador(input_values)
 
-    
+
+Ef_Ex_Paralelo_Sep(input_values)

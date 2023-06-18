@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 28 17:58:03 2023
+Created on Sat Jun 17 18:29:02 2023
 
 @author: Ramon
 """
@@ -37,7 +37,7 @@ def derivada_razao(cycle_inputs,delta = 10e-3):
 
 
 
-def SD_razao(cycle_inputs, delta = 10e-4, tol=10e-4, gama = 0.01):
+def SD_razao(cycle_inputs, delta = 10e-4, tol=10e-4, gama = 0.1):
     deriv = derivada_razao(cycle_inputs)
     while np.abs(deriv) > tol:
         
@@ -45,7 +45,7 @@ def SD_razao(cycle_inputs, delta = 10e-4, tol=10e-4, gama = 0.01):
             cycle_inputs['r'] = x_new
             deriv = derivada_razao(cycle_inputs)
             print(x_new)
-            if cycle_inputs['r'] > 2:
+            if cycle_inputs['r'] > 2.0:
                 break
     return x_new
 
@@ -62,8 +62,8 @@ def derivada_titulo(cycle_inputs,delta = 10e-3):
     dy = (new_cycle_y - current_cycle_y)
     gradient = dy/delta
     
-    #print(dy)
-    #print(gradient)
+    print(dy)
+    print(gradient)
     return dy
 
 
@@ -93,8 +93,8 @@ def derivada_superheating(cycle_inputs,delta = 10e-3):
     dz = (new_cycle_z - current_cycle_z)
     gradient = dz/delta
     
-    #print(dz)
-    #print(gradient)
+    print(dz)
+    print(gradient)
     return (dz)
 
 def SD_superheating(cycle_inputs, delta = 0.1, tol=10e-6, gama = 5):
@@ -119,11 +119,11 @@ def derivada_subcooling(cycle_inputs,delta = 10e-3):
     dw = (new_cycle_w - current_cycle_w)
     gradient = dw/delta
     
-    #print(dw)
-    #print(gradient)
+    print(dw)
+    print(gradient)
     return (dw)
 
-def SD_subcooling(cycle_inputs, delta = 10e-3, tol=10e-5, gama = 0.1):
+def SD_subcooling(cycle_inputs, delta = 10e-3, tol=10e-5, gama = 5):
     deriv = derivada_subcooling(cycle_inputs)
     while np.abs(deriv) > tol:
         
@@ -152,7 +152,6 @@ input_values ={
     'tit_evap_f':0.35
 }
 
-
 #derivada_razao(input_values)
 #SD_razao(input_values)
 #derivada_titulo(input_values)
@@ -160,4 +159,4 @@ input_values ={
 #derivada_superheating(input_values)
 #SD_superheating(input_values)
 #derivada_subcooling(input_values)
-SD_subcooling(input_values)
+#SD_subcooling(input_values)

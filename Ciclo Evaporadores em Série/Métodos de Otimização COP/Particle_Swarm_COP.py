@@ -37,7 +37,7 @@ cycle_inputs ={
     't_internal_f':250,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R410A',
+    'refrigerant':'R600',
     'variacao_titulo_f':0.1,
     'subcooling':5,
     'superheating':5,

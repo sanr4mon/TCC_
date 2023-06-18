@@ -31,7 +31,7 @@ input_values ={
     't_internal_f':250,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R410A',
+    'refrigerant':'R1234zeE',
     'variacao_titulo_f':0.2,
     'subcooling':5,
     'superheating':[1,2,3,4,5,6,7,8,9,10],

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun  4 14:24:23 2023
+Created on Sat Jun 17 13:46:30 2023
 
 @author: Ramon
 """
@@ -10,27 +10,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp as cp
 from CoolProp.CoolProp import PropsSI
-from Ef_Ex_Paralelo import Ef_Ex_Paralelo
+from Ef_Ex_Evap_Serie import Ef_Ex_Serie
 
 input_values ={
     't_external': 298,
     't_cond':308,
     't_internal_f':250,
-    't_internal_g':273,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R600A',
+    'refrigerant':'R410A',
+    'variacao_titulo_f':0.6,
     'subcooling':5,
     'superheating':5,
     'approach_HX':5,
-    'r':1.5,
-    'tit_evap_f':0.6
+    'r':1.5
 }
 
 
 def func_fx(x,y,cycle_inputs):
     cycle_inputs[y] = x
-    fx = Ef_Ex_Paralelo(cycle_inputs)
+    fx = Ef_Ex_Serie(cycle_inputs)
     #print (fx)
     return(fx)
 
@@ -103,7 +102,7 @@ def golden(cycle_inputs,xl,xu,y,et):
         #print(it)
 
 
-#golden(input_values,1,10,'approach_HX',0.0001)
+#golden(input_values,0.1,0.3,'variacao_titulo_f',0.0001)
 #golden(input_values,1,10,'subcooling',0.0001)
 #golden(input_values,1,10,'superheating',0.0001)
-#golden(input_values,1,2,'r',0.0001)
+golden(input_values,1,2,'r',0.0001)

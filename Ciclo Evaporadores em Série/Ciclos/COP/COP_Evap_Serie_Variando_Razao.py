@@ -41,7 +41,7 @@ input_values ={
     't_internal_f':250,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R410A',
+    'refrigerant':'R717',
     'variacao_titulo_f':0.2,
     'subcooling':5,
     'superheating':5,
@@ -137,78 +137,12 @@ def COP_Evap_Serie(cycle_inputs):
     for i in range(len(work)):
         cop.append((Q_ETI[i] + cycle_inputs['Q_ETB'])/work[i])
         i+=1
-    
+    plt.figure(figsize=(6, 4))
+    plt.scatter(cycle_inputs['r'],cop)
+    plt.xlabel('Razão das Vazões Mássicas')
+    plt.ylabel('COP')
+    plt.grid(True)
 
-            #Calculando taxa de destruição de exergia de cada componente]
-    #1. Compressor
-        Sger_comp = m1*(point_2['SMASS']-point_1['SMASS'])
-        ad_comp = cycle_inputs['t_cond']*Sger_comp
-        Ad_comp.append(ad_comp)
-        
-    
-    
-    #2. Condensador
-        Q_cond = m1*(point_2['HMASS'] - point_3['HMASS'])
-        Sger_cond = m1*(point_3['SMASS'] - point_2['SMASS']) + Q_cond/cycle_inputs['t_cond']
-        ad_cond = cycle_inputs['t_cond'] * Sger_cond
-        Ad_cond.append(ad_cond)
-    
-    
-    
-    #3. Trocador de Calor
-        Sger_HX = m1*(-point_4a['SMASS'] - point_1['SMASS'] + point_8['SMASS'] + point_3['SMASS'])
-        ad_HX = cycle_inputs['t_cond'] * Sger_HX
-        Ad_HX.append(ad_HX)
-    
-    
-    #4. Dispositivo de Expansão 1
-        Sger_DE1 = m2*(point_5a['SMASS'] - point_4a['SMASS'])
-        ad_DE1 = cycle_inputs['t_cond']*Sger_DE1
-        Ad_DE1.append(ad_DE1)
-        
-    #5. Dispositivo de Expansão 2
-        Sger_DE2 = m3*(point_5b['SMASS'] - point_4b['SMASS'])
-        ad_DE2 = cycle_inputs['t_cond'] * Sger_DE2 
-        Ad_DE2.append(ad_DE2)
-    
-    
-    #6. Evaporador do Freezer
-        Sger_ETI = np.zeros(len(Q_ETI))
-        for i in range(len(Q_ETI)):
-            Sger_ETI[i] = m1*(point_6a['SMASS']-point_5a['SMASS']) - (Q_ETI[i]/point_8['T'])
-        #Ad_ETI = cycle_inputs['t_cond'] * Sger_ETI
-
-        print("Sger_ETI",Sger_ETI)
-    
-    
-    
-    
-    #7. Evaporador da Geladeira
-        Sger_ETB = m2*(point_8['SMASS']-point_7['SMASS']) - (cycle_inputs['Q_ETB']/point_7['T'])
-        ad_ETB = cycle_inputs['t_cond'] * Sger_ETB
-        Ad_ETB.append(ad_ETB)
-  
-    
-    for i in range(len(Ad_comp)):
-        Ad_total.append(Ad_comp[i] +  Ad_cond[i] + Ad_HX[i] + Ad_DE1[i] + Ad_DE2[i] + Ad_ETI[i] + Ad_ETB[i])
-        Ef_Ex.append(1 - (Ad_total[i]/work[i]))
-        i+=1
-    
-    
-    
-    #print("Ad_comp",Ad_comp)
-    #print("Ad_cond",Ad_cond)
-    #print("Ad_HX",Ad_HX)
-    #print('Ad_DE1',Ad_DE1)
-    #print('Ad_DE2',Ad_DE2)
-    #print("Ad_ETI",Ad_ETI)
-    #print("Ad_ETB",Ad_ETB)
-    
-    #print(cop)
-    #print(Ef_Ex)
-    
-    
-    return cop
-    return Ef_Ex
+    print(cop)
 
 COP_Evap_Serie(input_values)

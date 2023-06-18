@@ -19,7 +19,7 @@ input_values ={
     't_internal_g':273,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R600A',
+    'refrigerant':'R410A',
     'subcooling':5,
     'superheating':5,
     'approach_HX':5,
@@ -106,4 +106,4 @@ def golden(cycle_inputs,xl,xu,y,et):
 #golden(input_values,0.35,0.65,'tit_evap_f',0.0001)
 #golden(input_values,1,10,'subcooling',0.0001)
 #golden(input_values,1,10,'superheating',0.0001)
-golden(input_values,1,2,'r',0.0001)
+#golden(input_values,1,2,'r',0.0001)

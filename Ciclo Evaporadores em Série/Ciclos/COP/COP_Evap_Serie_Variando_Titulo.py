@@ -32,7 +32,7 @@ input_values ={
     't_internal_f':250,
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
-    'refrigerant':'R410A',
+    'refrigerant':'R1234yf',
     'variacao_titulo_f':[0.1,0.15,0.2,0.25,0.3],
     'subcooling':5,
     'superheating':5,
@@ -62,7 +62,7 @@ def COP_Evap_Serie(cycle_inputs):
         point_4b = {'T':point_3['T']-cycle_inputs['approach_HX'],'P':point_3['P'],'refrigerant':cycle_inputs['refrigerant']}
         propriedades(point_4b)
     
-        #Dispositivo de Expansão 1 e Evaporador da Geladeira
+        #Dispositivo de Expansão 1 e Evaporador do Freezer
         point_5a = {'P':P_Evap,'HMASS':point_4a['HMASS'],'refrigerant':cycle_inputs['refrigerant']}
         propriedades(point_5a)
         #print('temp. 5a',point_5a['T'])
@@ -89,7 +89,7 @@ def COP_Evap_Serie(cycle_inputs):
         #print('temp 5b',point_5b['T'])
 
     
-        #Evaporador do Freezer
+        #Evaporador da Geladeira
         h7 = (m3*point_5b['HMASS'] + m2*point_6a['HMASS'])/m1
     
         point_7 = {'P':P_Evap,'H':h7,'refrigerant':cycle_inputs['refrigerant']}
@@ -135,7 +135,7 @@ def COP_Evap_Serie(cycle_inputs):
     
     plt.figure(figsize=(6, 4))
     plt.scatter(titulo_6a,cop)
-    plt.xlabel('Título na Saída do Freezer')
+    plt.xlabel('Variação do Título na Saída do Freezer')
     plt.ylabel('COP')
     plt.grid(True)
     

@@ -18,7 +18,7 @@ from COP_Evaporadores_Serie import COP_Evap_Serie
 def func(x,cycle_inputs):
     cycle_inputs['r'] = x
     
-    return COP_bypass(cycle_inputs)
+    return COP_Evap_Serie(cycle_inputs)
     
 
 
@@ -28,8 +28,8 @@ def derivada_razao(cycle_inputs,delta = 10e-3):
     current_x = cycle_inputs['r']
     cycle_inputs_x = copy.copy(cycle_inputs)
     cycle_inputs_x['r'] += delta
-    current_cycle_x = COP_bypass(cycle_inputs)
-    new_cycle_x = COP_bypass(cycle_inputs_x)
+    current_cycle_x = COP_Evap_Serie(cycle_inputs)
+    new_cycle_x = COP_Evap_Serie(cycle_inputs_x)
     dx = (new_cycle_x - current_cycle_x)
     gradient = dx/delta
     
@@ -58,10 +58,10 @@ def SD_razao(cycle_inputs, delta = 10e-3, tol=10e-9, gama = 5):
 def derivada_titulo(cycle_inputs,delta = 10e-3):
    
     current_y = cycle_inputs['variacao_titulo_f']
-    current_cycle_y = COP_bypass(cycle_inputs)
+    current_cycle_y = COP_Evap_Serie(cycle_inputs)
     cycle_inputs_y = copy.copy(cycle_inputs)
     cycle_inputs_y['variacao_titulo_f'] += delta    
-    new_cycle_y = COP_bypass(cycle_inputs_y)
+    new_cycle_y = COP_Evap_Serie(cycle_inputs_y)
     
     dy = (new_cycle_y - current_cycle_y)
     gradient = dy/delta
@@ -72,7 +72,7 @@ def derivada_titulo(cycle_inputs,delta = 10e-3):
 
 
 
-def SD_titulo(cycle_inputs, delta = 10e-3, tol=10e-08, gama = 5):
+def SD_titulo(cycle_inputs, delta = 10e-3, tol=10e-04, gama = 5):
     deriv = derivada_titulo(cycle_inputs)
     while np.abs(deriv) > tol:
         y_new = cycle_inputs['variacao_titulo_f'] + gama*(deriv/delta)
@@ -83,7 +83,7 @@ def SD_titulo(cycle_inputs, delta = 10e-3, tol=10e-08, gama = 5):
         if cycle_inputs['variacao_titulo_f'] < 0.1:
             break
 
-    #print(np.abs(func(y_new,cycle_inputs) - 3.8000508794454135))
+
     return(y_new)    
    
 
@@ -92,8 +92,8 @@ def derivada_superheating(cycle_inputs,delta = 10e-3):
     current_z = cycle_inputs['superheating']
     cycle_inputs_z = copy.copy(cycle_inputs)
     cycle_inputs_z['superheating'] += delta
-    current_cycle_z = COP_bypass(cycle_inputs)
-    new_cycle_z = COP_bypass(cycle_inputs_z)
+    current_cycle_z = COP_Evap_Serie(cycle_inputs)
+    new_cycle_z = COP_Evap_Serie(cycle_inputs_z)
     dz = (new_cycle_z - current_cycle_z)
     gradient = dz/delta
     
@@ -118,8 +118,8 @@ def derivada_subcooling(cycle_inputs,delta = 10e-3):
     current_w = cycle_inputs['subcooling']
     cycle_inputs_w = copy.copy(cycle_inputs)
     cycle_inputs_w['subcooling'] += delta
-    current_cycle_w = COP_bypass(cycle_inputs)
-    new_cycle_w = COP_bypass(cycle_inputs_w)
+    current_cycle_w = COP_Evap_Serie(cycle_inputs)
+    new_cycle_w = COP_Evap_Serie(cycle_inputs_w)
     dw = (new_cycle_w - current_cycle_w)
     gradient = dw/delta
     
@@ -148,7 +148,7 @@ input_values ={
     'Q_ETB':35200, #10 TR
     'N_isent': 0.7,
     'refrigerant':'R410A',
-    'variacao_titulo_f':0.2,
+    'variacao_titulo_f':0.3,
     'subcooling':5,
     'superheating':5,
     'approach_HX':5,
@@ -159,8 +159,8 @@ input_values ={
 #derivada_razao(input_values)
 #SD_razao(input_values)
 #derivada_titulo(input_values)
-#SD_titulo(input_values)
+SD_titulo(input_values)
 #derivada_superheating(input_values)
 #SD_superheating(input_values)
 #derivada_subcooling(input_values)
-SD_subcooling(input_values)
+#SD_subcooling(input_values)

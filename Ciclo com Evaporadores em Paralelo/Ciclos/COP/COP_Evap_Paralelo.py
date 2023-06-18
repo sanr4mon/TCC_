@@ -142,6 +142,8 @@ def COP_Evap_Paralelo(cycle_inputs):
     
     
     print("COP",COP)
+    print("work",work)
+    print("Q_ETI",Q_ETI)
     return COP
     
     
